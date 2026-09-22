@@ -1,0 +1,6 @@
+{
+  "name": "ConvertHub",
+  "description": "Convert, compress and transform your files directly in your browser. Fast, free, and privacy-focused online converters.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

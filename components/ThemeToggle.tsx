@@ -4,23 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const shouldBeDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
-    
+    // ConvertHub opens in its premium cinematic dark theme by default.
+    const shouldBeDark = savedTheme !== 'light';
+
     if (shouldBeDark) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
 
-    const timer = setTimeout(() => {
-      setIsDark(shouldBeDark);
-    }, 0);
-    return () => clearTimeout(timer);
+    setIsDark(shouldBeDark);
   }, []);
 
   const toggleTheme = () => {
@@ -40,7 +37,8 @@ export default function ThemeToggle() {
       id="theme-toggle-btn"
       onClick={toggleTheme}
       className="p-2 rounded-lg text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-800"
-      aria-label="Toggle theme"
+      aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+      title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
     >
       {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
     </button>

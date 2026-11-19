@@ -52,3 +52,14 @@ html.dark .ch-panel:hover { border-color: #8b633d; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Keep legacy converter controls consistent with the warm MangoDisk-inspired accent. */
+.bg-indigo-600 { background-color: #e88a35 !important; color: #fff !important; }
+.text-indigo-600 { color: #b86119 !important; }
+.border-indigo-500 { border-color: #e88a35 !important; }
+[class~="hover:bg-indigo-700"]:hover { background-color: #cf7425 !important; }
+[class~="hover:text-indigo-600"]:hover { color: #b86119 !important; }
+[class~="focus:border-indigo-500"]:focus { border-color: #e88a35 !important; }
+[class~="focus:ring-indigo-500"]:focus { --tw-ring-color: rgba(232,138,53,.22) !important; }
+html.dark .bg-indigo-600 { background-color: #e88a35 !important; color: #fff !important; }
+html.dark .text-indigo-600 { color: #f2ad70 !important; }

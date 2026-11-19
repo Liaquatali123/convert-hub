@@ -1,166 +1,53 @@
 @import "tailwindcss";
 
-/* ConvertHub — Premium Cinematic Dark Glassmorphism */
 :root {
-  color-scheme: dark;
-  scroll-behavior: smooth;
-  --ch-bg: #070910;
-  --ch-panel: rgba(17, 21, 36, .72);
-  --ch-panel-strong: rgba(20, 25, 42, .9);
-  --ch-border: rgba(148, 163, 184, .16);
-  --ch-muted: #9aa6bd;
-  --ch-text: #f4f6ff;
-  --ch-accent: #9b8cff;
-  --ch-cyan: #67e8f9;
+  color-scheme: light;
+  --ch-bg: #fbfaf7;
+  --ch-surface: #ffffff;
+  --ch-text: #26251f;
+  --ch-muted: #77766f;
+  --ch-line: #eae8e1;
+  --ch-accent: #e88a35;
+  --ch-accent-soft: #fff1df;
 }
 
-html { background: var(--ch-bg); }
-html.dark { color-scheme: dark; }
-html.dark body {
+html { scroll-behavior: smooth; background: var(--ch-bg); }
+body {
   min-height: 100vh;
+  background: var(--ch-bg);
   color: var(--ch-text);
-  background:
-    radial-gradient(ellipse at 12% 0%, rgba(93, 74, 190, .20), transparent 34rem),
-    radial-gradient(ellipse at 88% 12%, rgba(20, 145, 176, .13), transparent 32rem),
-    radial-gradient(ellipse at 50% 100%, rgba(78, 55, 150, .12), transparent 38rem),
-    var(--ch-bg) !important;
-  background-attachment: fixed;
-  letter-spacing: -.01em;
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
 }
-html.dark body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: .16;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
-}
-html.dark body > * { position: relative; z-index: 1; }
-html.dark main { min-height: 55vh; }
+html.dark { color-scheme: dark; }
+html.dark body { background: #171815; color: #f4f2ec; }
+::selection { background: #f6d8b5; color: #40240c; }
+* { -webkit-tap-highlight-color: transparent; }
+button, a, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+button:not(:disabled), a { transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+input, textarea, select { max-width: 100%; }
+:focus-visible { outline: 3px solid rgba(232, 138, 53, .35); outline-offset: 2px; }
+html.dark ::selection { background: rgba(232,138,53,.35); color: #fff; }
+html.dark input, html.dark textarea, html.dark select { color: #f4f2ec; background-color: #22231f; border-color: #41423b; }
+html.dark input::placeholder, html.dark textarea::placeholder { color: #96968d; }
+html.dark * { scrollbar-color: #55554b transparent; }
+* { scrollbar-width: thin; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: #d2cfc5; border-radius: 99px; }
+*::-webkit-scrollbar-track { background: transparent; }
 
-/* Glass navigation and shared surfaces */
-html.dark nav#main-navigation {
-  background: rgba(8, 11, 21, .76) !important;
-  border-color: var(--ch-border) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,.18);
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
+.ch-shell { width: min(1160px, calc(100% - 40px)); margin-inline: auto; }
+.ch-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #a45b1c; background: #fff1df; border: 1px solid #f5dfc5; border-radius: 999px; padding: 7px 12px; font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.ch-section-title { color: #26251f; font-weight: 800; letter-spacing: -.045em; }
+.ch-muted { color: #77766f; }
+.ch-panel { background: #fff; border: 1px solid #eae8e1; border-radius: 18px; }
+.ch-panel:hover { border-color: #e4c8a7; }
+html.dark .ch-section-title { color: #f4f2ec; }
+html.dark .ch-panel { background: #20211d; border-color: #383932; }
+html.dark .ch-panel:hover { border-color: #8b633d; }
+@media (max-width: 640px) {
+  .ch-shell { width: min(100% - 28px, 1160px); }
 }
-html.dark footer#footer {
-  background: rgba(9, 12, 22, .78) !important;
-  border-color: var(--ch-border) !important;
-  backdrop-filter: blur(18px);
-}
-html.dark [class~="dark:bg-gray-950"],
-html.dark [class~="dark:bg-gray-900"],
-html.dark [class~="dark:bg-gray-950/10"],
-html.dark [class~="dark:bg-gray-950/20"],
-html.dark [class~="dark:bg-gray-950/30"],
-html.dark [class~="dark:bg-gray-900/80"] {
-  background: var(--ch-panel) !important;
-  backdrop-filter: blur(18px) saturate(135%);
-  -webkit-backdrop-filter: blur(18px) saturate(135%);
-}
-html.dark [class~="dark:bg-gray-950/95"] {
-  background: rgba(8, 11, 21, .78) !important;
-  backdrop-filter: blur(24px);
-}
-html.dark [class~="dark:bg-gray-900/70"],
-html.dark [class~="dark:bg-gray-900/50"] {
-  background: rgba(24, 30, 49, .64) !important;
-}
-html.dark [class~="dark:border-gray-900"],
-html.dark [class~="dark:border-gray-800"],
-html.dark [class~="dark:border-gray-700"] {
-  border-color: var(--ch-border) !important;
-}
-html.dark [class~="dark:text-gray-50"],
-html.dark [class~="dark:text-white"] { color: #f5f7ff !important; }
-html.dark [class~="dark:text-gray-300"] { color: #c7d0e3 !important; }
-html.dark [class~="dark:text-gray-400"] { color: #a0abc1 !important; }
-html.dark [class~="dark:text-gray-500"] { color: #8793ab !important; }
-
-/* Tool cards, drop zones, content panels and FAQ surfaces */
-html.dark [id^="tool-card-"],
-html.dark [id^="faq-container"] > div > div,
-html.dark [id^="contact-"] .rounded-2xl,
-html.dark .prose {
-  border-color: var(--ch-border);
-}
-html.dark [id^="tool-card-"] {
-  position: relative;
-  overflow: hidden;
-  border-radius: 1.15rem;
-  background: linear-gradient(145deg, rgba(25, 30, 51, .88), rgba(12, 16, 29, .78)) !important;
-  box-shadow: 0 16px 42px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.045);
-  transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease;
-}
-html.dark [id^="tool-card-"]::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(167,139,250,.55), rgba(103,232,249,.35), transparent);
-  pointer-events: none;
-}
-html.dark [id^="tool-card-"]:hover {
-  transform: translateY(-4px);
-  border-color: rgba(167,139,250,.42) !important;
-  box-shadow: 0 22px 55px rgba(0,0,0,.32), 0 0 28px rgba(124,92,240,.10);
-}
-html.dark [id$="dropzone"],
-html.dark [id*="dropzone"] {
-  border-color: rgba(167,139,250,.34) !important;
-  border-radius: 1.2rem;
-  background: linear-gradient(145deg, rgba(28, 32, 55, .72), rgba(13, 17, 31, .76)) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-}
-html.dark [id$="dropzone"]:hover,
-html.dark [id*="dropzone"]:hover {
-  border-color: rgba(103,232,249,.55) !important;
-  box-shadow: 0 0 32px rgba(103,232,249,.08), inset 0 1px 0 rgba(255,255,255,.05);
-}
-
-/* Buttons and controls */
-html.dark button,
-html.dark a { -webkit-tap-highlight-color: transparent; }
-html.dark button:not(:disabled),
-html.dark a[class*="rounded"] { transition-duration: .2s; }
-html.dark input,
-html.dark textarea,
-html.dark select {
-  color: #f4f6ff;
-  background-color: rgba(11, 15, 28, .82) !important;
-  border-color: rgba(148,163,184,.22) !important;
-  border-radius: .8rem;
-}
-html.dark input::placeholder,
-html.dark textarea::placeholder { color: #77839b; }
-html.dark input:focus,
-html.dark textarea:focus,
-html.dark select:focus {
-  outline: none;
-  border-color: rgba(167,139,250,.78) !important;
-  box-shadow: 0 0 0 3px rgba(139,92,246,.16);
-}
-html.dark button[class*="bg-indigo-600"],
-html.dark a[class*="bg-indigo-600"] {
-  background: linear-gradient(135deg, #7765e8, #5b4bc4) !important;
-  box-shadow: 0 8px 24px rgba(99,82,214,.22);
-}
-html.dark button[class*="bg-indigo-600"]:hover,
-html.dark a[class*="bg-indigo-600"]:hover {
-  filter: brightness(1.12);
-}
-
-/* Refined typography, layout rhythm and scrollbar */
-html.dark h1, html.dark h2, html.dark h3 { letter-spacing: -.035em; }
-html.dark ::selection { background: rgba(139,92,246,.35); color: white; }
-html.dark * { scrollbar-width: thin; scrollbar-color: rgba(139,125,210,.45) transparent; }
-html.dark *::-webkit-scrollbar { width: 8px; height: 8px; }
-html.dark *::-webkit-scrollbar-thumb { background: rgba(139,125,210,.38); border-radius: 99px; }
-html.dark *::-webkit-scrollbar-track { background: transparent; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }

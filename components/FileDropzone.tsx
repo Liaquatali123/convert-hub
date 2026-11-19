@@ -113,8 +113,8 @@ export default function FileDropzone({
         onClick={onButtonClick}
         className={`relative w-full flex flex-col items-center justify-center p-8 md:p-12 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
           isDragActive
-            ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/20 shadow-inner'
-            : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-gray-50/30 dark:bg-gray-950/10'
+            ? 'border-orange-400 bg-orange-50/70 dark:bg-orange-950/20 shadow-inner'
+            : 'border-stone-200 dark:border-stone-700 hover:border-orange-300 dark:hover:border-orange-800 bg-[#fdfcf9] dark:bg-stone-950/30'
         }`}
       >
         <input
@@ -127,14 +127,14 @@ export default function FileDropzone({
           id={`${id}-input`}
         />
 
-        <div className="p-4 rounded-full bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 text-gray-500 dark:text-gray-400 mb-4 shadow-sm">
+        <div className="p-4 rounded-full bg-orange-50 dark:bg-orange-950/40 border border-orange-100 dark:border-orange-900/40 text-orange-700 dark:text-orange-300 mb-4 shadow-sm">
           <Upload className="w-6 h-6 animate-pulse" />
         </div>
 
-        <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 text-center mb-1">
+        <p className="text-sm font-semibold text-stone-800 dark:text-stone-200 text-center mb-1">
           {descriptionText}
         </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+        <p className="text-xs text-stone-400 dark:text-stone-500 text-center">
           Maximum file size is {maxSizeMB}MB
         </p>
 

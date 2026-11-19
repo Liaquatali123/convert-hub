@@ -2,17 +2,17 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, Search, FileText, Sparkles, Database, Image, Binary, ChevronRight } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Menu, X, Search, FileText, Sparkles, Database, Image, Binary, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { TOOLS, Tool } from '@/lib/tools';
 import ThemeToggle from './ThemeToggle';
 
 const categoryIconMap: Record<string, React.ReactNode> = {
-  image: <Image className="w-4 h-4 text-emerald-500" />,
-  pdf: <FileText className="w-4 h-4 text-red-500" />,
-  data: <Database className="w-4 h-4 text-blue-500" />,
-  text: <Binary className="w-4 h-4 text-purple-500" />,
-  utility: <Sparkles className="w-4 h-4 text-amber-500" />
+  image: <Image className="h-4 w-4 text-orange-600" />,
+  pdf: <FileText className="h-4 w-4 text-rose-600" />,
+  data: <Database className="h-4 w-4 text-blue-600" />,
+  text: <Binary className="h-4 w-4 text-violet-600" />,
+  utility: <Sparkles className="h-4 w-4 text-amber-600" />,
 };
 
 export default function Navbar() {
@@ -21,234 +21,127 @@ export default function Navbar() {
   const [searchResults, setSearchResults] = useState<Tool[]>([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close search dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowSearchDropdown(false);
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setShowSearchDropdown(false);
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMobileMenuOpen(false);
-      setSearchQuery('');
-      setShowSearchDropdown(false);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, [pathname]);
+    setMobileMenuOpen(false);
+    setSearchQuery('');
+    setShowSearchDropdown(false);
+  }, [pathname, searchParams]);
 
-  // Handle Search Input
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
     setSearchQuery(query);
-    
-    if (query.trim() === '') {
+    if (!query.trim()) {
       setSearchResults([]);
       setShowSearchDropdown(false);
       return;
     }
-
-    const filtered = TOOLS.filter(tool => {
-      const q = query.toLowerCase();
-      return (
-        tool.name.toLowerCase().includes(q) ||
-        tool.description.toLowerCase().includes(q) ||
-        tool.keywords.some(k => k.toLowerCase().includes(q)) ||
-        tool.category.toLowerCase().includes(q)
-      );
-    });
-
+    const q = query.toLowerCase();
+    const filtered = TOOLS.filter((tool) =>
+      tool.name.toLowerCase().includes(q) ||
+      tool.description.toLowerCase().includes(q) ||
+      tool.keywords.some((keyword) => keyword.toLowerCase().includes(q)) ||
+      tool.category.toLowerCase().includes(q)
+    );
     setSearchResults(filtered);
     setShowSearchDropdown(true);
   };
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'All Tools', href: '/tools' },
-    { name: 'Image', href: '/tools?category=image' },
+    { name: 'All tools', href: '/tools' },
+    { name: 'Images', href: '/tools?category=image' },
     { name: 'PDF', href: '/tools?category=pdf' },
     { name: 'Data', href: '/tools?category=data' },
-    { name: 'Text', href: '/tools?category=text' },
-    { name: 'About', href: '/about' },
   ];
 
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
+    if (href === '/tools') return pathname === '/tools' && !searchParams.get('category');
+    if (href.includes('?')) return pathname === '/tools' && searchParams.get('category') === href.split('=')[1];
+    return pathname === href;
+  };
+
+  const searchBox = (mobile = false) => (
+    <div className={`relative ${mobile ? 'w-full' : 'w-[220px] xl:w-[250px]'}`} ref={mobile ? undefined : dropdownRef}>
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+        <input
+          id={mobile ? 'mobile-search-input' : 'nav-search-input'}
+          type="search"
+          placeholder="Find a tool..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onFocus={() => searchQuery.trim() && setShowSearchDropdown(true)}
+          className="h-10 w-full rounded-xl border border-stone-200 bg-stone-50 pl-9 pr-3 text-sm text-stone-800 outline-none transition focus:border-orange-300 focus:bg-white focus:ring-4 focus:ring-orange-100 dark:border-stone-700 dark:bg-stone-900 dark:text-white dark:focus:ring-orange-950"
+        />
+      </div>
+      {showSearchDropdown && searchQuery.trim() && !mobile && (
+        <div id="search-dropdown-overlay" className="absolute right-0 top-12 z-50 max-h-96 w-[340px] overflow-y-auto rounded-2xl border border-stone-200 bg-white p-2 shadow-[0_20px_60px_rgba(38,37,31,.14)] dark:border-stone-700 dark:bg-stone-900">
+          <div className="px-3 py-2 text-[10px] font-extrabold uppercase tracking-[.12em] text-stone-400">{searchResults.length} matching tools</div>
+          {searchResults.length ? searchResults.map((tool) => (
+            <button key={tool.id} onClick={() => { router.push(tool.route); setShowSearchDropdown(false); setSearchQuery(''); }} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left hover:bg-orange-50 dark:hover:bg-stone-800">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-50 dark:bg-orange-950/40">{categoryIconMap[tool.category]}</span>
+              <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold text-stone-800 dark:text-white">{tool.name}</span><span className="block truncate text-xs text-stone-400">{tool.description}</span></span>
+              <ChevronRight className="h-4 w-4 text-stone-400" />
+            </button>
+          )) : <p className="px-3 py-5 text-center text-sm text-stone-500">No matching tools. Try another keyword.</p>}
+        </div>
+      )}
+    </div>
+  );
+
   return (
-    <nav id="main-navigation" className="sticky top-0 z-50 w-full bg-white/95 dark:bg-gray-950/95 border-b border-gray-150 dark:border-gray-900 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Brand Logo */}
-          <div className="flex items-center">
-            <Link id="logo-link" href="/" className="flex items-center gap-2 group">
-              <span className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-sm group-hover:bg-indigo-700 transition-colors">
-                C
-              </span>
-              <span className="font-extrabold text-xl tracking-tight text-gray-900 dark:text-white">
-                Convert<span className="text-indigo-600">Hub</span>
-              </span>
-            </Link>
+    <nav id="main-navigation" className="sticky top-0 z-50 w-full border-b border-stone-200/90 bg-[#fbfaf7]/95 backdrop-blur-xl dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="ch-shell">
+        <div className="flex h-[70px] items-center justify-between gap-4">
+          <Link id="logo-link" href="/" className="flex shrink-0 items-center gap-2.5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-orange-500 text-lg font-black text-white shadow-sm shadow-orange-200">C</span>
+            <span className="text-[19px] font-extrabold tracking-[-.05em] text-stone-900 dark:text-white">ConvertHub<span className="text-orange-600">.</span></span>
+          </Link>
+          <div className="hidden items-center gap-1 lg:flex">
+            {navLinks.map((link) => (
+              <Link key={link.name} id={`nav-link-${link.name.toLowerCase().replace(/\s+/g, '-')}`} href={link.href} className={`rounded-xl px-3.5 py-2 text-[13px] font-semibold ${isActive(link.href) ? 'bg-orange-50 text-orange-800 dark:bg-orange-950/40 dark:text-orange-300' : 'text-stone-500 hover:bg-white hover:text-stone-900 dark:text-stone-300 dark:hover:bg-stone-900 dark:hover:text-white'}`}>
+                {link.name}
+              </Link>
+            ))}
           </div>
-
-          {/* Desktop Navigation Links */}
-          <div className="hidden lg:flex space-x-1">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href.includes('?') && pathname === '/tools' && typeof window !== 'undefined' && window.location.search === link.href.split('?')[1]);
-              return (
-                <Link
-                  id={`nav-link-${link.name.toLowerCase()}`}
-                  key={link.name}
-                  href={link.href}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-indigo-50 dark:bg-indigo-950/45 text-indigo-600 dark:text-indigo-400 font-semibold'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-gray-950 dark:hover:text-white'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Right Controls: Live Search + Theme Toggle */}
-          <div className="hidden md:flex items-center gap-4 flex-1 max-w-sm justify-end">
-            <div className="relative w-full max-w-[240px] xl:max-w-[280px]" ref={dropdownRef}>
-              <div className="relative">
-                <input
-                  id="nav-search-input"
-                  type="text"
-                  placeholder="Search tools..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  onFocus={() => searchQuery.trim() !== '' && setShowSearchDropdown(true)}
-                  className="w-full pl-9 pr-4 py-1.5 text-sm rounded-lg bg-gray-50 hover:bg-gray-100/70 focus:bg-white dark:bg-gray-900 dark:hover:bg-gray-800/70 dark:focus:bg-gray-950 border border-gray-200 dark:border-gray-800 focus:border-indigo-500 focus:outline-none transition-all text-gray-900 dark:text-white"
-                />
-                <Search className="w-4 h-4 absolute left-3 top-2.5 text-gray-400 pointer-events-none" />
-              </div>
-
-              {/* Search Dropdown Results Overlay */}
-              {showSearchDropdown && (
-                <div id="search-dropdown-overlay" className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl z-50">
-                  <div className="p-2 border-b border-gray-100 dark:border-gray-900 text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 tracking-wider">
-                    Found {searchResults.length} Tools
-                  </div>
-                  <div className="p-1 divide-y divide-gray-50 dark:divide-gray-900">
-                    {searchResults.length > 0 ? (
-                      searchResults.map((tool) => (
-                        <button
-                          key={tool.id}
-                          onClick={() => {
-                            router.push(tool.route);
-                            setShowSearchDropdown(false);
-                            setSearchQuery('');
-                          }}
-                          className="w-full text-left px-3 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 flex items-center gap-3 transition-colors group"
-                        >
-                          <div className="p-1.5 bg-gray-50 dark:bg-gray-900 group-hover:bg-white dark:group-hover:bg-gray-950 rounded-md border border-gray-100 dark:border-gray-800 transition-colors">
-                            {categoryIconMap[tool.category]}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
-                              {tool.name}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                              {tool.description}
-                            </div>
-                          </div>
-                          <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 transition-transform group-hover:translate-x-0.5" />
-                        </button>
-                      ))
-                    ) : (
-                      <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                        No tools found for "{searchQuery}"
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
+          <div className="hidden items-center gap-2 md:flex">
+            <div className="hidden xl:block">{searchBox()}</div>
             <ThemeToggle />
+            <Link href="/tools" className="hidden items-center gap-1.5 rounded-xl bg-stone-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-orange-600 sm:inline-flex dark:bg-orange-500 dark:hover:bg-orange-400">Explore tools <ArrowUpRight className="h-3.5 w-3.5" /></Link>
           </div>
-
-          {/* Mobile hamburger menu button and Theme Toggle for smaller screens */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex items-center gap-2 md:hidden">
             <ThemeToggle />
-            <button
-              id="mobile-menu-toggle-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none"
-              aria-label="Open primary navigation menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <button id="mobile-menu-toggle-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="flex h-10 w-10 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-200" aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}>
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div id="mobile-menu-drawer" className="md:hidden border-t border-gray-100 dark:border-gray-900 bg-white dark:bg-gray-950 px-4 pt-2 pb-6 space-y-3">
-          {/* Search bar inside mobile drawer */}
-          <div className="relative my-2">
-            <input
-              id="mobile-search-input"
-              type="text"
-              placeholder="Search tools..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-lg bg-gray-50 focus:bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 focus:border-indigo-500 focus:outline-none text-gray-900 dark:text-white"
-            />
-            <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400 pointer-events-none" />
-
-            {/* Mobile Search Results list */}
-            {searchQuery.trim() !== '' && (
-              <div className="mt-2 max-h-60 overflow-y-auto bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg divide-y divide-gray-100 dark:divide-gray-800">
-                {searchResults.length > 0 ? (
-                  searchResults.map((tool) => (
-                    <button
-                      key={tool.id}
-                      onClick={() => {
-                        router.push(tool.route);
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full text-left px-3 py-2 flex items-center gap-3"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold text-gray-950 dark:text-white truncate">
-                          {tool.name}
-                        </div>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </button>
-                  ))
-                ) : (
-                  <div className="p-3 text-center text-xs text-gray-500 dark:text-gray-400">
-                    No results for "{searchQuery}"
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                id={`mobile-nav-link-${link.name.toLowerCase()}`}
-                key={link.name}
-                href={link.href}
-                className="block px-3 py-2 rounded-lg text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900 hover:text-gray-950 dark:hover:text-white transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
+        <div id="mobile-menu-drawer" className="border-t border-stone-200 bg-[#fbfaf7] px-4 pb-5 pt-4 md:hidden dark:border-stone-800 dark:bg-stone-950">
+          <div className="mb-4">{searchBox(true)}</div>
+          {searchQuery.trim() && (
+            <div className="mb-3 max-h-48 overflow-y-auto rounded-xl border border-stone-200 bg-white p-1 dark:border-stone-700 dark:bg-stone-900">
+              {searchResults.map((tool) => <button key={tool.id} onClick={() => { router.push(tool.route); setMobileMenuOpen(false); setSearchQuery(''); }} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-stone-700 hover:bg-orange-50 dark:text-stone-200 dark:hover:bg-stone-800">{categoryIconMap[tool.category]}{tool.name}</button>)}
+              {!searchResults.length && <p className="p-3 text-center text-xs text-stone-500">No matching tools.</p>}
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-2">
+            {navLinks.map((link) => <Link key={link.name} href={link.href} className={`rounded-xl px-3 py-3 text-sm font-semibold ${isActive(link.href) ? 'bg-orange-50 text-orange-800 dark:bg-orange-950/40 dark:text-orange-300' : 'bg-white text-stone-600 dark:bg-stone-900 dark:text-stone-300'}`}>{link.name}</Link>)}
+            <Link href="/about" className="rounded-xl bg-white px-3 py-3 text-sm font-semibold text-stone-600 dark:bg-stone-900 dark:text-stone-300">About</Link>
           </div>
         </div>
       )}

@@ -1,27 +1,27 @@
 import type {Metadata} from 'next';
-import './globals.css'; // Global styles
+import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'ConvertHub – Free Online Converters — Fast, Simple & Private',
-  description: 'Convert, compress, and transform your files directly in your browser. Fast, 100% private client-side converters for image, PDF, data, and text without server uploads.',
+  title: 'ConvertHub – Premium Online Converters',
+  description: 'Convert, compress, and transform files directly in your browser. Fast, private client-side tools with a premium experience.',
   openGraph: {
-    title: 'ConvertHub – Free Online Converters — Fast, Simple & Private',
-    description: 'Convert, compress, and transform your files directly in your browser. Fast, 100% private client-side converters for image, PDF, data, and text without server uploads.',
+    title: 'ConvertHub – Premium Online Converters',
+    description: 'Fast, private client-side file conversion tools.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ConvertHub – Free Online Converters — Fast, Simple & Private',
-    description: 'Convert, compress, and transform your files directly in your browser. Fast, 100% private client-side converters for image, PDF, data, and text without server uploads.',
+    title: 'ConvertHub – Premium Online Converters',
+    description: 'Fast, private client-side file conversion tools.',
   },
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body suppressHydrationWarning className="min-h-screen bg-white dark:bg-gray-950 text-gray-950 dark:text-gray-50 flex flex-col justify-between transition-colors antialiased">
+    <html lang="en" className="dark scroll-smooth">
+      <body suppressHydrationWarning className="min-h-screen text-gray-50 flex flex-col justify-between antialiased">
         <Navbar />
         <main className="flex-grow flex flex-col">
           {children}
@@ -31,4 +31,3 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     </html>
   );
 }
-

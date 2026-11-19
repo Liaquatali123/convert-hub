@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Search, FileText, Sparkles, Database, Image, Binary, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { TOOLS, Tool } from '@/lib/tools';
 import ThemeToggle from './ThemeToggle';
@@ -21,7 +21,6 @@ export default function Navbar() {
   const [searchResults, setSearchResults] = useState<Tool[]>([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -37,7 +36,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     setSearchQuery('');
     setShowSearchDropdown(false);
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -68,8 +67,8 @@ export default function Navbar() {
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/';
-    if (href === '/tools') return pathname === '/tools' && !searchParams.get('category');
-    if (href.includes('?')) return pathname === '/tools' && searchParams.get('category') === href.split('=')[1];
+    if (href === '/tools') return pathname === '/tools' && (typeof window === 'undefined' || !window.location.search.includes('category='));
+    if (href.includes('?')) return pathname === '/tools' && typeof window !== 'undefined' && window.location.search.includes(href.split('?')[1]);
     return pathname === href;
   };
 
